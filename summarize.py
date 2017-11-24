@@ -4,36 +4,38 @@ with open('grade.txt') as f:
     content = f.readlines()
 
 f = open('grade_summary.md', 'w')
-output = ['# Summary: \n',
-          '| Test | # Correct | # Possible | \n',
-          '|------|-----------|------------| \n',
-          '\n', '\n', '# Detailed Report: \n']
+output = ['# Summary:',
+          '| Function | # Correct | # Possible |',
+          '|----------|-----------|------------|',
+          '', '', '# Detailed Report:', '']
 
 current_test = None
 test_results = {'Total points earned': [0, 0]}
 
 for i in range(5, len(content) - 2):
-    if current_test != content[i][0:content[i].find('/')]:
-        output.append('\n')
-        
+    if current_test != content[i][0:content[i].find('/')]:        
         current_test = content[i][0:content[i].find('/')]
         test_results[current_test] = [0, 0]
 
-    print(content[i][content[i].find(':'):])
-    if content[i][content[i].find(': '):] == ': Correct\n':
+        output.append('')
+        output.append('#### {0}'.format(current_test))
+        output.append('|Test|Status|')
+        output.append('|----|------|')
+
+    if content[i][content[i].find(': ') + 2:-1] == 'Correct':
         test_results[current_test][0] += 1
         test_results['Total points earned'][0] += 1
     test_results[current_test][1] += 1
     test_results['Total points earned'][1] += 1
     
-    output.append(content[i])
+    output.append('| {} | {} |'.format(content[i][content[i].find('/') + 1: content[i].find(': ')], content[i][content[i].find(': ') + 2:-1]))
 
 tests = list(test_results.keys())
     
 for i in range(len(tests)):
-    output.insert(3 + i, '| {} | {} | {} | \n'.format(tests[i], test_results[tests[i]][0], test_results[tests[i]][1]))
+    output.insert(3 + i, '| {0} | {1} | {2} |'.format(tests[i], test_results[tests[i]][0], test_results[tests[i]][1]))
     
 for line in output:
-    f.write(line)
+    f.write('{}{}'.format(line, '\n'))
 
 f.close()
